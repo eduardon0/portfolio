@@ -1,0 +1,482 @@
+---
+title: "Ideology as the Driver of Political Opinion"
+subtitle: "GSS 2022 Descriptive Report"
+author: "Eduardo M."
+---
+
+```{r setup, include = FALSE}
+
+knitr::opts_chunk$set(
+	fig.align = "center", fig.height = 7.5, fig.width = 12,
+	message = FALSE,
+	warning = FALSE,
+	dpi = 150,
+	include = TRUE, 
+	echo = FALSE
+)
+```
+
+```{r}
+rm(list=ls())
+
+library(dplyr)
+library(forcats)
+library(ggplot2)
+library(haven)
+library(here)
+library(patchwork)
+# 
+# dir_main <- "..."
+
+dir_preprocessing <- here(file.path("data", "preprocessing"))
+
+dir_reportDescriptive <- here(file.path("data", "report", "descriptive"))
+
+results_byVarCat <- readRDS(file.path(dir_preprocessing, "results_byVarCat.rds"))
+```
+
+```{r}
+#| label: svyMeans for description
+
+svyMeans_freqs <- lapply(results_byVarCat, "[[", "svyMeans_freqs")
+svyMeans_crosses <- lapply(results_byVarCat, "[[", "svyMeans_crosses")
+
+svyMeans = list(
+  svyMeans_freqs = svyMeans_freqs,
+  svyMeans_crosses = svyMeans_crosses
+  )
+
+capture.output(
+  dput(svyMeans), 
+  file = file.path(dir_reportDescriptive, "svyMeans_forDescription.txt")
+)
+
+
+```
+
+# Summary
+
+This descriptive analysis of the 2022 General Social Survey (GSS) reveals that **ideological orientation—self-placement** as liberal, moderate, or conservative—emerges as **the most consistent and powerful predictor of public attitudes** in the United States. More than any demographic trait or even partisan identification, ideology shapes beliefs about public policy, institutional trust, and moral issues.
+
+Compared to age, sex, income, or party affiliation, ideological identity offers sharper divisions and clearer insights into how Americans view social and political life. As we move through the results, a recurring pattern emerges: ideology consistently sorts opinion, while **sociodemographic factors often play a secondary role** or influence opinion indirectly through ideological orientation.
+
+```{r}
+#| echo: false
+#| results: 'asis'
+cat("\\newpage\n")
+```
+
+# Ideological Identity and Political affiliation
+
+**Public opinion in the U.S. continues to be structured more by ideological orientation than by traditional partisan affiliation or demographic traits.** While party identification remains a key political marker, it increasingly reflects underlying ideological leanings rather than serving as an independent force. This section explores how respondents place themselves on the ideological spectrum, how they identify with political parties, and how these patterns intersect with age and gender.
+
+### Summary of Key Points
+
+-   Ideology explains more than party ID: many independents are ideologically aligned (liberal or conservative), even if they reject party labels.
+
+-   Demographics matter, but mostly through ideology: gender and age influence political identity by channeling individuals toward particular ideological positions.
+
+-   Ideological self-placement is the clearest predictor of downstream attitudes, such as views on public policy, institutional trust, and rights-related issues explored in subsequent sections.
+
+### Descriptive summary of findings
+
+Most respondents place themselves near the ideological center. As shown in the charts below, moderates and conservatives form the largest ideological groups, followed by liberals. However, despite this central tendency in self-placement, the distribution of political identification reveals a different story.
+
+```{r}
+#| echo: false
+#| results: 'asis'
+# cat("\\vspace*{.55in}\n")
+
+(results_byVarCat$political$plots$polviews$freq + 
+    ggtitle("")) +
+(results_byVarCat$political$plots$polviews_rec$freq +
+   ggtitle("Recoded")) + 
+  patchwork::plot_annotation("Political ideology")
+
+```
+
+When asked about party identification, independents emerged as the most common response, followed by Democrats and then Republicans. This pattern reinforces findings from other surveys suggesting a broad disengagement from the two-party system—though, as the next section reveals, many self-identified independents hold clearly ideological positions.
+
+Interestingly, despite the fact that more respondents identify as conservatives than liberals, there are more Democrats than Republicans in the sample. This uncoupling of party and ideology is a central dynamic in contemporary American politics.
+
+```{r}
+#| echo: false
+#| results: 'asis'
+# cat("\\vspace*{.55in}\n")
+
+(results_byVarCat$political$plots$partyid_rec0$freq + 
+    ggtitle("")) +
+(results_byVarCat$political$plots$partyid_rec$freq +
+   ggtitle("Recoded")) + 
+  patchwork::plot_annotation("Party identification")
+
+```
+
+A closer look at ideological self-placement versus partisanship reveals an important distinction: while many people identify as neutral ideologically, their party affiliation tends to be more polarized. That is, people report centrist ideological positions but still align themselves with one of the two major parties or with strong leanings toward them.
+
+```{r}
+#| echo: false
+#| results: 'asis'
+
+(results_byVarCat$political$plots$polviews_rec2$freq + 
+    ggtitle(label = "Political ideology")) +
+(results_byVarCat$political$plots$partyid_rec2$freq + 
+   ggtitle(label = "Party identification"))  + 
+  patchwork::plot_annotation("Strength of ideology/identification")
+
+```
+
+### Role of Ideology and Sociodemographics
+
+Gender differences are consistent with prior research: women are more likely to identify as liberal and Democratic, while men are more likely to identify as conservative. However, the gender gap in party ID is less pronounced: men are not significantly more Republican than women, suggesting that gendered ideological leanings may not always translate into party alignment.
+
+```{r}
+#| echo: false
+#| results: 'asis'
+
+(results_byVarCat$political$plots$polviews_rec$crosses$sex_rec + 
+    ggtitle(label = "Political ideology")) +
+(results_byVarCat$political$plots$partyid_rec$crosses$sex_rec + 
+   ggtitle(label = "Party identification"))  + 
+  patchwork::plot_annotation("By respondents sex")
+
+```
+
+When it comes to age, younger respondents are more likely to identify as political independents, reflecting broader generational detachment from parties. However, this does not necessarily reflect ideological moderation: many young people identify as liberal, despite avoiding partisan labels.
+
+```{r}
+#| echo: false
+#| results: 'asis'
+
+(results_byVarCat$political$plots$polviews_rec$crosses$age_rec + 
+    ggtitle(label = "Political ideology")) +
+(results_byVarCat$political$plots$partyid_rec$crosses$age_rec + 
+   ggtitle(label = "Party identification"))  + 
+  patchwork::plot_annotation("By age of respondent")
+
+```
+
+```{r}
+#| echo: false
+#| results: 'asis'
+cat("\\newpage\n")
+```
+
+# Policy Preferences: Death Penalty, Gun Permits, Marijuana
+
+**Policy views on criminal justice and regulation reflect pronounced ideological divides.** Respondents were asked about their support for the death penalty, gun permit laws, and the legalization of marijuana.
+
+### Summary of Key Points
+
+-   Support for punitive policies (death penalty, gun rights) is high, especially among conservatives.
+
+-   Liberals show greater support for marijuana legalization and opposition to harsh punishments.
+
+-   Nonresponse on marijuana suggests measurement sensitivity or political disengagement.
+
+-   Political ideology provides a clearer explanation of attitudes than demographic background.
+
+### Descriptive summary of findings
+
+Support for the death penalty is high (∼58%), followed by support for requiring gun permits (∼45%). Marijuana legalization has lower support (26%), and an unusually high nonresponse rate: over 60% of respondents either chose "Don't know" or did not answer.
+
+```{r}
+#| echo: false
+#| results: 'asis'
+
+(results_byVarCat$political$plots$cappun$freq + 
+    xlim(0,70) + 
+    ggtitle(label = "Death penalty")) /
+(results_byVarCat$political$plots$gunlaw$freq + 
+    xlim(0,70) + 
+    ggtitle(label = "Gun purchase permit")) /
+(results_byVarCat$political$plots$grass$freq + 
+    xlim(0,70) + 
+    ggtitle(label = "Marijuana legalization")) + 
+  patchwork::plot_annotation("Support for policies")
+  
+```
+
+### Role of Ideology and Sociodemographics
+
+Crosstab results show that ideology is the most important predictor of views on each of these policies. Conservatives show strong support for the death penalty and gun rights, while liberals express higher support for marijuana legalization and more opposition to punitive measures.
+
+```{r}
+#| echo: false
+#| results: 'asis'
+
+(
+  (results_byVarCat$political$plots$cappun$crosses$polviews_rec + 
+     xlim(0,80) + 
+     ggtitle(label = "Death penalty")) +
+  (results_byVarCat$political$plots$gunlaw$crosses$polviews_rec + 
+     xlim(0,80) + 
+     ggtitle(label = "Gun purchase permit"))
+) /
+(
+  patchwork::plot_spacer() +
+  (results_byVarCat$political$plots$grass$crosses$polviews_rec + 
+     xlim(0,80) + 
+     ggtitle(label = "Marijuana legalization")) +
+  patchwork::plot_spacer() +
+  patchwork::plot_layout(widths = c(.35,1,.35))
+)  + 
+patchwork::plot_annotation("By political ideology")
+
+```
+
+Demographic factors such as age do matter—men are more supportive of punitive policies—but these effects are consistently weaker than those of ideology.
+
+```{r}
+#| echo: false
+#| results: 'asis'
+
+(
+  (results_byVarCat$political$plots$cappun$crosses$age_rec + 
+     xlim(0,80) + 
+     ggtitle(label = "Death penalty")) +
+  (results_byVarCat$political$plots$gunlaw$crosses$age_rec + 
+     xlim(0,80) + 
+     ggtitle(label = "Gun purchase permit"))
+) /
+(
+  patchwork::plot_spacer() +
+  (results_byVarCat$political$plots$grass$crosses$age_rec + 
+     xlim(0,80) + 
+     ggtitle(label = "Marijuana legalization")) +
+  patchwork::plot_spacer() +
+  patchwork::plot_layout(widths = c(.35,1,.35))
+)  + 
+patchwork::plot_annotation("By age of respondent")
+
+cat("\\newpage\n")
+```
+
+# Abortion: General Beliefs and Specific Scenarios
+
+**Abortion remains one of the most morally charged issues in American public life.** This section examines both general abortion attitudes (pro-choice vs. pro-life) and opinions across specific circumstances (e.g., health risk, rape, gender selection).
+
+### Summary of Key Points
+
+-   A majority identify as pro-choice, with strong views dominating the spectrum.
+
+-   Support for abortion varies depending on the scenario, with highest approval for rape and health risk cases.
+
+-   Gender effects are limited and inconsistent.
+
+-   Ideology is the clearest and most consistent predictor of abortion attitudes.
+
+### Descriptive summary of findings
+
+More respondents identify as pro-choice than pro-life, and strong positions ("strongly pro-choice" or "strongly pro-life") are more common than weakly held ones. When asked about specific abortion scenarios, a clear hierarchy of support emerges:
+
+-   Highest support is for abortions in cases of rape or when the woman's health is at risk.
+
+-   The lowest levels of support are for abortions based on gender selection.
+
+-   The rest of the scenarios have a mid level of support.
+
+Nonresponse rates are high across all scenarios (60%+), possibly reflecting discomfort or sensitivity around the topic.
+
+```{r}
+#| echo: false
+#| results: 'asis'
+
+(results_byVarCat$abortion$plots$abbelief_rec0$freq + 
+    ggtitle("")) +
+(results_byVarCat$abortion$plots$abbelief_rec$freq +
+   ggtitle("Recoded")) + 
+  patchwork::plot_annotation("Pro-choice vs Pro-Life")
+
+```
+
+```{r}
+#| echo: false
+#| results: 'asis'
+
+results_byVarCat$abortionSituations$plots$freq
+
+```
+
+### Role of Ideology and Sociodemographics
+
+Ideology dominates abortion attitudes. Liberals are consistently more supportive of abortion access across all scenarios. Moderates tend to agree with liberals when it comes to medical or ethical justifications (e.g., rape, health risks) but align more with conservatives in morally ambiguous cases (e.g., gender selection).
+
+```{r}
+#| echo: false
+#| results: 'asis'
+
+results_byVarCat$abortion$plots$abbelief_rec$crosses$polviews_rec + 
+  xlim(0,35) + 
+  ggtitle(label = "Pro-choice vs Pro-Life", subtitle = "By political ideology")
+
+```
+
+```{r}
+#| echo: false
+#| results: 'asis'
+
+results_byVarCat$abortionSituations$plots$crosses$polviews_rec + 
+  ggtitle(label = "Abortion support in different scenarios", subtitle = "By political ideology")
+
+```
+
+Gender differences appear only in specific scenarios. For example, men are slightly less opposed to abortion in cases of rape.
+
+```{r}
+#| echo: false
+#| results: 'asis'
+
+results_byVarCat$abortion$plots$abbelief_rec$crosses$sex_rec + 
+  xlim(0,35) + 
+  ggtitle(label = "Pro-choice vs Pro-Life", subtitle = "By respondents sex")
+
+```
+
+```{r}
+#| echo: false
+#| results: 'asis'
+
+results_byVarCat$abortionSituations$plots$crosses$sex_rec + 
+  ggtitle(label = "Abortion support in different scenarios", subtitle = "By respondents sex")
+
+cat("\\newpage\n")
+```
+
+# Institutional Trust
+
+This section explores public **confidence in a variety of institutions**, from the military and science to Congress and the media.
+
+### Summary of Key Points
+
+-   Trust is high for professional and scientific institutions, low for political ones.
+
+-   Ideology polarizes attitudes: liberals and conservatives trust entirely different sectors.
+
+-   Sociodemographic influences are minimal compared to ideological effects.
+
+### Descriptive summary of findings
+
+Overall, the military, scientific community, and medicine are the most trusted institutions. In contrast, Congress, the press, television and the executive branch receive the lowest levels of confidence. These patterns reveal general skepticism toward government but greater trust in professional or technical institutions.
+
+```{r}
+#| echo: false
+#| results: 'asis'
+
+results_byVarCat$trust$plots$freq
+
+```
+
+### Role of Ideology and Sociodemographics
+
+Institutional trust is heavily shaped by political ideology:
+
+-   Liberals tend to trust more the pharmaceutical companies, the scientific community, the press, and education.
+
+-   Conservatives express higher trust in the military and organized religion.
+
+-   Government institutions divide trust: liberals are more supportive of the executive branch, while conservatives trust the judiciary more.
+
+```{r}
+#| echo: false
+#| fig-height: 12
+#| fig-width: 12
+#| results: asis
+
+results_byVarCat$trust$plots$crosses$polviews_rec + 
+  ggtitle(label = "Trust in institutions", subtitle = "By political ideology")
+
+```
+
+Demographic differences (age, sex, education) exist but are modest in comparison. Ideology clearly dominates the trust landscape.
+
+```{r}
+#| echo: false
+#| fig-height: 12
+#| fig-width: 12
+#| results: asis
+
+results_byVarCat$trust$plots$crosses$age_rec + 
+  ggtitle(label = "Trust in institutions", subtitle = "By age of respondent")
+
+cat("\\newpage\n")
+```
+
+# Final Conclusions
+
+The findings from the 2022 GSS paint a consistent and compelling picture: **ideological identity is the most powerful predictor of public opinion across a wide range of domains.** Whether evaluating support for public policy, trust in institutions, or views on abortion, the distinction between liberal, moderate, and conservative orientations offers sharper explanatory power than demographic variables like age, gender, or even party identification.
+
+Across the board, **political ideology acts as a filter** through which individuals interpret moral dilemmas, assess institutions, and decide who deserves rights and protections. In contrast, party identification often masks ideological heterogeneity—many self-identified independents exhibit strong ideological leanings, and demographic categories provide only limited predictive power unless considered in tandem with ideological self-placement.
+
+This insight has important implications for researchers and communicators. It suggests that in the current political climate, **analyses that fail to account for ideological alignment may overlook the most salient source of variation in public opinion.** Furthermore, the high rates of nonresponse and uncertainty in sensitive areas like free speech and abortion point to a growing discomfort or disengagement that may warrant deeper qualitative exploration.
+
+In sum, **understanding Americans' beliefs today requires understanding their ideological identities first and foremost.** As the country navigates complex debates around policy, rights, and governance, ideology remains the clearest lens through which these opinions take shape.
+
+# Methodology Summary
+
+| **Field** | **Description** |
+|-----------------|-------------------------------------------------------|
+| **Survey Name** | General Social Survey (GSS) – 2022 Cross-Section |
+| **Organization** | NORC at the University of Chicago |
+| **Sample Design** | Multi-stage, clustered, stratified, area probability sample with unequal probabilities of selection |
+| **Mode of Data Collection** | Mixed-mode: web-first and face-to-face-first, with phone and mail follow-up |
+| **Fieldwork Period** | May to December 2022 |
+| **Sample Size** | 3,544 completed interviews |
+| **Weight Adjustments** | Includes corrections for non-response, within-household selection, and post-stratification on key demographics |
+| **Analysis Method** | Design-based estimation using R’s `survey` package with: `ids = vpsu`, `strata = vstrat`, `weights = wtssnrps` |
+
+```{r}
+#| eval: false
+#| include: false
+
+
+results_byVarCat$political$tables_freqs$polviews
+
+results_byVarCat$political$tables_crosses$polviews$sex_rec
+results_byVarCat$political$tables_crosses$polviews$age_rec
+```
+
+```{r}
+#| eval: false
+#| include: false
+saveRDS(df, file.path("data", "df.rds"))
+
+write_dta(data = df, path = file.path("data", "df.dta"))
+
+model_results = readRDS(file = file.path("data", "featureSelection", "abbelief.rds"))
+
+```
+
+```{r}
+#| eval: false
+#| include: false
+
+lapply(split(model_results, model_results$dataset), function(df){
+  df %>% 
+    group_by(var, var_label, dataset) %>% 
+    summarise(
+      importance = sum(importance), 
+      .groups = "drop"
+    ) %>% 
+    arrange(-importance) %>% 
+    mutate(rank = 1:nrow(.)) %>% 
+    slice(1:30) %>% 
+    mutate(importance_prop = importance / sum(importance))
+}) %>% 
+  bind_rows() %>% 
+  # group_by(var, var_label) %>% 
+  # summarise(importance_avg = mean(importance), .groups = "drop") %>% 
+  # 
+  # arrange(-importance_avg) %>% 
+  # slice(1:60) %>% 
+  
+  mutate(y = paste(var, var_label)) %>% 
+  arrange(-importance_prop) %>% 
+  mutate(rank2 = 1:nrow(.)) %>% 
+  mutate(y = paste(var, var_label)) %>% 
+  # mutate(y = reorder(y, -rank2)) %>% 
+  mutate(y = factor(y, rev(unique(y)))) %>% 
+  
+  ggplot(aes(x = importance_prop, y = y, col = dataset)) + 
+  geom_point()
+```

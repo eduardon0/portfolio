@@ -1,0 +1,26 @@
+/* Target common container classes */
+main.content, .container, .quarto-container {
+  max-width: 3600px !important;
+  /*margin: auto;*/
+  padding: 0;
+  margin-left: 1px !important;  /* match the TOC width + small offset */
+  margin-right: 1px !important;  /* match the TOC width + small offset */
+}
+
+/* Optional: Make plots expand too */
+.cell-output-display, .cell-output {
+  max-width: 100% !important;
+}
+
+/*nav.toc-sidebar {*/
+/*  width: 50px !important;  !* default is 250px *!*/
+/*  margin-left: 1px !important;  !* match the TOC width + small offset *!*/
+/*}*/
+
+body {
+  background-color: white !important;
+}
+
+/** {*/
+/*  border: 2px dashed palegreen !important;*/
+/*}*/
